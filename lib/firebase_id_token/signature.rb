@@ -118,7 +118,7 @@ module FirebaseIdToken
     end
 
     def still_valid?(payload)
-      payload['exp'].to_i > Time.current.to_i &&
+      ( !@verify_expiration || ( payload['exp'].to_i > Time.current.to_i ) ) &&
       payload['iat'].to_i <= Time.current.to_i
     end
 
