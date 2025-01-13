@@ -68,8 +68,9 @@ module FirebaseIdToken
     # Loads attributes: `:project_ids` from {FirebaseIdToken::Configuration},
     # and `:kid`, `:jwt_token` from the related `jwt_token`.
     # @param [String] jwt_token Firebase ID Token
-    def initialize(jwt_token, raise_error: false)
+    def initialize(jwt_token, raise_error: false, verify_expiration: true)
       @raise_error = raise_error
+      @verify_expiration = verify_expiration
       @project_ids = FirebaseIdToken.configuration.project_ids
       @kid = extract_kid(jwt_token)
       @jwt_token = jwt_token
