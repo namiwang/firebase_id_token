@@ -78,11 +78,11 @@ module FirebaseIdToken
     end
 
     # @see Signature.verify
-    def verify(verify_expiration: true)
+    def verify
       certificate = firebase_id_token_certificates.find(@kid, raise_error: @raise_error)
       return unless certificate
 
-      payload = decode_jwt_payload(@jwt_token, certificate.public_key, verify_expiration: verify_expiration)
+      payload = decode_jwt_payload(@jwt_token, certificate.public_key)
       authorize payload
     end
 
@@ -96,8 +96,8 @@ module FirebaseIdToken
       raise
     end
 
-    def decode_jwt_payload(token, cert_key, verify_expiration: true)
-      JWT.decode(token, cert_key, true, JWT_DEFAULTS.merge({verify_expiration: verify_expiration})).first
+    def decode_jwt_payload(token, cert_key)
+      JWT.decode(token, cert_key, true, JWT_DEFAULTS.merge({verify_expiration: @verify_expiration})).first
     rescue StandardError
       return nil unless @raise_error
 
