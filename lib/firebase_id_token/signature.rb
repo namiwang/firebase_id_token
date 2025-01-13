@@ -59,8 +59,8 @@ module FirebaseIdToken
     #
     # @see {Signature.verify}
     # @return [Hash]
-    def self.verify!(jwt_token)
-      new(jwt_token, raise_error: true).verify
+    def self.verify!(jwt_token, verify_expiration: true)
+      new(jwt_token, raise_error: true).verify(verify_expiration: verify_expiration)
     end
 
     attr_accessor :firebase_id_token_certificates
@@ -77,11 +77,11 @@ module FirebaseIdToken
     end
 
     # @see Signature.verify
-    def verify
+    def verify(verify_expiration: true)
       certificate = firebase_id_token_certificates.find(@kid, raise_error: @raise_error)
       return unless certificate
 
-      payload = decode_jwt_payload(@jwt_token, certificate.public_key)
+      payload = decode_jwt_payload(@jwt_token, certificate.public_key, verify_expiration: verify_expiration)
       authorize payload
     end
 
@@ -95,8 +95,8 @@ module FirebaseIdToken
       raise
     end
 
-    def decode_jwt_payload(token, cert_key)
-      JWT.decode(token, cert_key, true, JWT_DEFAULTS).first
+    def decode_jwt_payload(token, cert_key, verify_expiration: true)
+      JWT.decode(token, cert_key, true, JWT_DEFAULTS.merge({verify_expiration: verify_expiration})).first
     rescue StandardError
       return nil unless @raise_error
 
