@@ -51,8 +51,8 @@ module FirebaseIdToken
     #
     # @param raise_error [Boolean] default: false
     # @return [nil, Hash]
-    def self.verify(jwt_token, raise_error: false)
-      new(jwt_token, raise_error: raise_error).verify
+    def self.verify(jwt_token, raise_error: false, verify_expiration: true)
+      new(jwt_token, raise_error: raise_error, verify_expiration: verify_expiration).verify
     end
 
     # Equivalent to `.verify(jwt_token, raise_error: true)`.
